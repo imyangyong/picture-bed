@@ -34,9 +34,36 @@ class App extends Component {
         visible: false,
       }
     }
+  
+    this.dropRef = React.createRef()
+  }
+  
+  componentDidMount() {
+    let div = this.dropRef.current;
+    
+    div.addEventListener('dragover', e => {
+      e.preventDefault()
+      e.stopPropagation()
+    })
+    div.addEventListener('drop', this.droped)
+  }
+  
+  droped = event => {
+    event.stopPropagation();
+    event.preventDefault();
+    this.setFileInfo(event.dataTransfer.files[0])
   }
   
   setFileInfo = file => {
+    if (!file.type.includes('image')) {
+      this.setState({
+        message: {type: 'error', content: '文件类型错误！🙅', visible: true}
+      });
+      setTimeout(() => {
+        this.closeMessage();
+      }, 1000)
+      return;
+    }
     this.setState({
       file,
       filename: file.name,
@@ -62,17 +89,19 @@ class App extends Component {
       fileDom: ref
     })
     ref.addEventListener('change', event => {
-      if (!event.target.files[0].type.includes('image')) {
-        this.setState({
-          message: {type: 'error', content: '文件类型错误！🙅', visible: true}
-        });
-        setTimeout(() => {
-          this.closeMessage();
-        }, 1000)
-        return;
-      }
       this.setFileInfo(event.target.files[0])
     })
+  }
+  
+  setDropZoneDom = ref => {
+    this.setState({
+      fileDropZoneDom: ref
+    })
+    ref.addEventListener('drop', event => {
+      event.stopPropagation();
+      event.preventDefault();
+      console.log(event)
+    });
   }
   
   closeMessage = () => {
@@ -167,7 +196,7 @@ class App extends Component {
     }
     
     return (
-      <div className='App'>
+      <div className='App' ref={this.dropRef}>
         <h1>Image Upload</h1>
         <div className='file-preview'>
           <div className='file-drop-zone'>
