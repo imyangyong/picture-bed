@@ -42,6 +42,7 @@ class App extends Component {
       filename: file.name,
       processValue: 0,
       imageUrl: '',
+      copied: false,
     })
     blobTobase64(file).then(res => {
       this.setState({
@@ -106,7 +107,7 @@ class App extends Component {
   
   upload = () => {
     this.process();
-    const form = new FormData();
+    let form = new FormData();
     form.append('file', this.state.file)
     form.append('filename', this.state.filename)
     fetch('/upload', {
@@ -114,7 +115,7 @@ class App extends Component {
       cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
       // credentials: 'same-origin', // include, same-origin, *omit
       headers: {
-        'content-type': 'application/x-www-form-urlencoded'
+        // 'content-type': 'multipart/form-data'
       },
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       mode: 'cors', // no-cors, cors, *same-origin
@@ -150,6 +151,7 @@ class App extends Component {
       file: null,
       processValue: 0,
       imageUrl: '',
+      copied: false,
     })
     if (this.state.timer) {
       clearInterval(this.state.timer);
