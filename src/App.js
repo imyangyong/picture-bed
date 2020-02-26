@@ -182,10 +182,19 @@ class App extends Component {
     })
       .then(response => {
         response.json().then(res => {
-          this.setState({
-            imageUrl: res.url,
-            processValue: 100
-          })
+          if (res.url) {
+            this.setState({
+              imageUrl: res.url,
+              processValue: 100
+            })
+          } else {
+            this.setState({
+              message: {type: 'error', content: res.message + '！🙅', visible: true}
+            });
+            setTimeout(() => {
+              this.closeMessage();
+            }, 1000)
+          }
         })
       })
   }
