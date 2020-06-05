@@ -4,6 +4,6 @@
 
 # 地址
 
-http://www.90paw.com:3003
+https://www.90paw.com/images
 
 
