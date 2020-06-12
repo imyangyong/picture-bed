@@ -13,6 +13,8 @@ import CardContent from '@material-ui/core/CardContent';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import Tooltip from '@material-ui/core/Tooltip';
+import GitHubIcon from '@material-ui/icons/GitHub';
 import {blobTobase64, copy} from 'deft-utils'
 
 class App extends Component {
@@ -49,10 +51,12 @@ class App extends Component {
   
   componentDidMount() {
     const word = window.localStorage.getItem('member') || '';
-    this.setState({
-      auth: word,
-      certified: this.state.member.map(m => m.code).includes(word)
-    })
+    if (word && /^([A-Z]|[a-z]|\d|_)+$/.test(word) && word.length <= 10) {
+      this.setState({
+        auth: word,
+        certified: true
+      })
+    }
   }
   
   componentDidUpdate(prevProps, prevState) {
@@ -221,12 +225,15 @@ class App extends Component {
   }
   
   clear = () => {
-    this.state.fileDom.value = '';
     this.setState({
       file: null,
       processValue: 0,
       imageUrl: '',
       copied: false,
+      fileDom: {
+        ...this.state.fileDom,
+        value: ''
+      }
     })
     if (this.state.timer) {
       clearInterval(this.state.timer);
@@ -243,19 +250,41 @@ class App extends Component {
   }
   
   comfirm = () => {
-    if (this.state.member.map(m => m.code).includes(this.state.auth)) {
-      window.localStorage.setItem('member', this.state.auth)
+    if (!/^([A-Z]|[a-z]|\d|_)+$/.test(this.state.auth)) {
       this.setState({
-        certified: true
-      })
-    } else {
-      this.setState({
-        message: {type: 'error', content: '口令错误！🙅', visible: true}
+        message: {type: 'error', content: '格式错误！🙅', visible: true}
       });
       setTimeout(() => {
         this.closeMessage();
       }, 1000)
+      return;
     }
+    if (this.state.auth.length > 10) {
+      this.setState({
+        message: {type: 'error', content: '长度不能超过10！🙅', visible: true}
+      });
+      setTimeout(() => {
+        this.closeMessage();
+      }, 1000)
+      return;
+    }
+    window.localStorage.setItem('member', this.state.auth)
+    this.setState({
+      certified: true
+    })
+    // if (this.state.member.map(m => m.code).includes(this.state.auth)) {
+    //   window.localStorage.setItem('member', this.state.auth)
+    //   this.setState({
+    //     certified: true
+    //   })
+    // } else {
+    //   this.setState({
+    //     message: {type: 'error', content: '口令错误！🙅', visible: true}
+    //   });
+    //   setTimeout(() => {
+    //     this.closeMessage();
+    //   }, 1000)
+    // }
   }
   
   render() {
@@ -268,9 +297,10 @@ class App extends Component {
         {
           this.state.certified
             ? <div className='App' ref={this.dropRef}>
-              <div>
+              <GitHubIcon className='github' onClick={() => window.open('https://github.com/AngusYang9/picture-bed')}/>
+              <div className='title-wrapper'>
                 <h1>Image Upload</h1>
-                <span className='auth'>{this.state.member.find(m => m.code === this.state.auth).name}</span>
+                <span className='auth'>{this.state.auth}</span>
               </div>
               <div className='file-preview'>
                 <div className='file-drop-zone'>
@@ -280,14 +310,14 @@ class App extends Component {
                         <div className='file-content'>
                           <Card>
                             <CardContent className='img-content'>
-                              <img className='img' src={this.state.imageDataURI}/>
+                              <img className='img' alt={this.state.filename} src={this.state.imageDataURI}/>
                             </CardContent>
                           </Card>
                         </div>
                       </div>
                       :
                       <div className="file-drop-zone-title">
-                        Drag &amp; drop files here ...
+                        Drag &amp; drop file here ...
                         <br></br>or<br></br>
                         Copy &amp; paste screenshots
                         here ...
@@ -362,8 +392,10 @@ class App extends Component {
             
             : <>
               <div className='enter-container'>
-                <h3>请输入口令：</h3>
-                <Input value={this.state.auth} onChange={this.setAuth}></Input>
+                <h3>请输入你的名字：</h3>
+                <Tooltip title="支持字母,数字,下划线" aria-label="add">
+                  <Input value={this.state.auth} onChange={this.setAuth}></Input>
+                </Tooltip>
                 <Button variant="contained" color="primary" onClick={this.comfirm}>确定</Button>
               </div>
               <Snackbar className='message' open={this.state.message.visible} autoHideDuration={6000}

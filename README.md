@@ -1,6 +1,6 @@
-<h1 align="center" style="margin: 30px 0 35px;">PICTURE BED</h1>
+<h1 align="center" style="margin: 30px 0 35px;">90免费图床</h1>
 
-🐰 **picture bed with the huawei obs**
+🐰 **永久免费存储，无上限。**
 
 # 地址
 
