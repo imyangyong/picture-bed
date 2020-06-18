@@ -229,12 +229,9 @@ class App extends Component {
       file: null,
       processValue: 0,
       imageUrl: '',
-      copied: false,
-      fileDom: {
-        ...this.state.fileDom,
-        value: ''
-      }
+      copied: false
     })
+    this.state.fileDom.setAttribute('value', '');
     if (this.state.timer) {
       clearInterval(this.state.timer);
       this.setState({
