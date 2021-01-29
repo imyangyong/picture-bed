@@ -294,7 +294,7 @@ class App extends Component {
         {
           this.state.certified
             ? <div className='App' ref={this.dropRef}>
-              <GitHubIcon className='github' onClick={() => window.open('https://github.com/AngusYang9/picture-bed')}/>
+              <GitHubIcon className='github' onClick={() => window.open('https://github.com/imyangyong/picture-bed')}/>
               <div className='title-wrapper'>
                 <h1>Image Upload</h1>
                 <span className='auth'>{this.state.auth}</span>
